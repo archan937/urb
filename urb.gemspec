@@ -15,6 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = URB::VERSION
 
+  gem.add_dependency "moneta"
   gem.add_development_dependency "rake"
   gem.add_development_dependency "pry"
 end
