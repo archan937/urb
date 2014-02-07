@@ -1,6 +1,8 @@
 require "securerandom"
 require "moneta"
 
+require "urb/middleware"
+require "urb/engine" if defined?(Rails::Engine)
 require "urb/version"
 
 module URB
@@ -14,8 +16,8 @@ module URB
     urls[key]
   end
 
-  def store(url)
-    generate_key.tap do |key|
+  def store(url, key = nil)
+    (key || generate_key).tap do |key|
       urls[key] = url
     end
   end
@@ -27,7 +29,7 @@ private
   end
 
   def generate_key
-    SecureRandom.urlsafe_base64(6).gsub /[_-]/, ""
+    SecureRandom.urlsafe_base64(8).gsub /[_-]/, ""
   end
 
 end
