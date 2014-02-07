@@ -35,7 +35,7 @@ module URB
           env["REQUEST_PATH"] = path
           env["ORIGINAL_FULLPATH"] = "#{path}?#{query_string}"
           env["PATH_INFO"] = path
-          env["action_dispatch.request.request_parameters"] = Rack::Utils.parse_query(query_string)
+          env["action_dispatch.request.request_parameters"] = Rack::Utils.parse_nested_query(query_string)
 
         end
       end
