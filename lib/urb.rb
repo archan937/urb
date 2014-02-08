@@ -8,6 +8,7 @@ require "urb/version"
 module URB
   extend self
 
+  CHARS = [*0..9, *"A".."Z", *"a".."z"]
   PATH = "/-/"
   PREFIX = "@"
 
@@ -36,7 +37,7 @@ private
   end
 
   def generate_key
-    SecureRandom.urlsafe_base64(6).gsub /[_-]/, ""
+    SecureRandom.urlsafe_base64(6).gsub(/[_-]/){ CHARS.sample }
   end
 
 end
