@@ -1,47 +1,30 @@
 module URB
   class Middleware
 
-    def initialize(app, *config)
+    def initialize(app)
       @app = app
-      URB *config unless config.blank?
     end
 
     def call(env)
+      if env["PATH_INFO"].match(/^#{URB::PATH}(\w+)?/)
+        request = Rack::Request.new env
+        path = request.get? ? URB.fetch($1) : request.params["path"]
 
-      # env["HTTP_HOST"] = "localhost:3000"
-      # env["HTTP_ORIGIN"] = "http://localhost:3000"
-      # env["REQUEST_METHOD"] = "GET"
-      # env["REQUEST_URI"] = "http://localhost:3000/-/?asdf"
-      # env["REQUEST_PATH"] = "/-/"
-      # env["ORIGINAL_FULLPATH"] = "/-/?asdf"
-      # env["PATH_INFO"] = "/-/"
-      # Rack::Request.new(env).params
-      # env["rack.request.form_hash"] = {"url" => "http://apple.com"}
-      # env["rack.request.form_vars"] = "url=http%3A%2F%2Fapple.com"}
+        if path
+          return [302, {"Location" => "#{URB::PATH}#{URB.store(path)}"}, ["Moved Temporarily"]] unless request.get?
 
-      if env["REQUEST_PATH"].match(/^\/-\/(\w+)/)
-        if url = env["REQUEST_METHOD"] == "GET" ? URB.fetch($1) : Rack::Request.new(env).params["url"]
+          path, query_string = path.match(/^([^\?]+)\?(.*)$/).captures
+          params = Rack::Utils.parse_nested_query query_string
+          params.each{|key, value| request.update_param key, value}
 
-          if env["REQUEST_METHOD"] == "POST"
-            URB.store url, $1
-            env["REQUEST_METHOD"] = "GET"
-            env["rack.request.form_hash"] = nil
-            env["rack.request.form_vars"] = nil
-          end
-
-          path, query_string = url.match(/^([^\?]+)\?(.*)$/).captures
-
-          env["REQUEST_URI"] = "#{env["HTTP_ORIGIN"]}#{path}?#{query_string}"
-          env["REQUEST_PATH"] = path
-          env["ORIGINAL_FULLPATH"] = "#{path}?#{query_string}"
           env["PATH_INFO"] = path
-          env["action_dispatch.request.request_parameters"] = Rack::Utils.parse_nested_query(query_string)
+          env["REQUEST_URI"] = "#{env["HTTP_ORIGIN"]}#{path}?#{query_string}" if env["REQUEST_URI"]
+          env["REQUEST_PATH"] = path if env["REQUEST_PATH"]
+          env["ORIGINAL_FULLPATH"] = "#{path}?#{query_string}" if env["ORIGINAL_FULLPATH"]
 
         end
       end
-
       @app.call env
-
     end
 
   end

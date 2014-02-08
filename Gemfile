@@ -8,6 +8,8 @@ end
 
 group :test do
   gem "simplecov", :require => false
-  gem "minitest", "~> 4.2"
-  gem "mocha", :require => false
+  gem "minitest"
+  gem "mocha"
+  gem "rack"
+  gem "rack-minitest", :require => "rack-minitest/test", git: "git://github.com/brandonweiss/rack-minitest.git"
 end

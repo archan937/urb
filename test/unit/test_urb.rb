@@ -1,12 +1,12 @@
 require_relative "../test_helper"
 
 module Unit
-  class TestURB < MiniTest::Unit::TestCase
+  class TestURB < Minitest::Test
 
     describe URB do
       before do
         URB.instance_variable_set :@config, nil
-        URB.instance_variable_set :@urls, nil
+        URB.instance_variable_set :@paths, nil
       end
 
       describe ".URB" do
@@ -23,12 +23,12 @@ module Unit
         end
       end
 
-      describe ".urls" do
+      describe ".paths" do
         describe "not configured" do
           it "returns an in-memory Moneta store instance" do
             store = mock
             Moneta.expects(:new).with(:Memory).returns(store)
-            assert_equal store, URB.send(:urls)
+            assert_equal store, URB.send(:paths)
           end
         end
         describe "configured" do
@@ -38,11 +38,11 @@ module Unit
           it "returns an in-memory Moneta store instance" do
             store = mock
             Moneta.expects(:new).with(:Foo, :bar => "baz").returns(store)
-            assert_equal store, URB.send(:urls)
+            assert_equal store, URB.send(:paths)
           end
         end
         it "memoizes its Moneta store" do
-          assert_equal URB.send(:urls).object_id, URB.send(:urls).object_id
+          assert_equal URB.send(:paths).object_id, URB.send(:paths).object_id
         end
       end
 
@@ -54,19 +54,48 @@ module Unit
       end
 
       describe ".store" do
-        it "stores a passed URL in the Moneta store" do
-          urls, key, url = mock, "abc123", "/foo?bar=baz"
-          URB.expects(:generate_key).returns(key)
-          URB.expects(:urls).returns(urls)
-          urls.expects(:[]=).with(key, url)
-          assert_equal key, URB.store(url)
+        before do
+          @key = "abc123"
+          @path = "/foo?bar=baz"
+          @value = "#{URB::PREFIX}#{@path}"
+        end
+        describe "when value not stored yet" do
+          it "stores the passed path in the Moneta store and returns the generated key" do
+            paths = {}
+
+            URB.expects(:paths).at_least_once.returns(paths)
+            URB.expects(:generate_key).returns(@key)
+
+            assert_equal @key, URB.store(@path)
+            assert_equal({
+              @key => @path,
+              @value => @key
+            }, paths)
+          end
+        end
+        describe "when value already stored" do
+          it "returns the key of the already stored value" do
+            paths = {
+              @key => @path,
+              @value => @key
+            }
+
+            URB.expects(:paths).at_least_once.returns(paths)
+            URB.expects(:generate_key).never
+
+            assert_equal @key, URB.store(@path)
+            assert_equal({
+              @key => @path,
+              @value => @key
+            }, paths)
+          end
         end
       end
 
       describe ".fetch" do
-        it "returns the stored URL in the Moneta store" do
-          urls = {"abc" => "/foo", "123" => "/bar"}
-          URB.expects(:urls).at_least_once.returns(urls)
+        it "returns the stored path in the Moneta store" do
+          paths = {"abc" => "/foo", "123" => "/bar"}
+          URB.expects(:paths).at_least_once.returns(paths)
           assert_equal "/foo", URB.fetch("abc")
           assert_equal "/bar", URB.fetch("123")
         end

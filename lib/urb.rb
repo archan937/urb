@@ -8,28 +8,35 @@ require "urb/version"
 module URB
   extend self
 
+  PATH = "/-/"
+  PREFIX = "@"
+
   def config(*args)
     @config = args
   end
 
   def fetch(key)
-    urls[key]
+    paths[key]
   end
 
-  def store(url, key = nil)
-    (key || generate_key).tap do |key|
-      urls[key] = url
+  def store(path)
+    value = "#{PREFIX}#{path}"
+    paths[value] || begin
+      generate_key.tap do |key|
+        paths[key] = path
+        paths[value] = key
+      end
     end
   end
 
 private
 
-  def urls
-    @urls ||= Moneta.new *(@config || [:Memory])
+  def paths
+    @paths ||= Moneta.new *(@config || [:Memory])
   end
 
   def generate_key
-    SecureRandom.urlsafe_base64(8).gsub /[_-]/, ""
+    SecureRandom.urlsafe_base64(6).gsub /[_-]/, ""
   end
 
 end
