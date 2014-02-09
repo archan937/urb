@@ -2,6 +2,8 @@
 .bundle
 .rvmrc
 Gemfile.lock
+demo/tmp
+demo/log/*.log
 doc
 pkg
 test/coverage
