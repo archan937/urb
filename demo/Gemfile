@@ -9,5 +9,5 @@ gem 'jquery-rails'
 gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'
 
-gem 'urb', :path => '../..'
+gem 'urb', :path => '..'
 gem 'pry'
