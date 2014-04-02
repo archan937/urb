@@ -9,6 +9,14 @@ module Unit
         URB.instance_variable_set :@paths, nil
       end
 
+      describe "URB::VERSION" do
+        it "has the current version" do
+          version = File.read File.expand_path("../../../VERSION", __FILE__)
+          assert_equal version, URB::VERSION
+          assert File.read(File.expand_path("../../../CHANGELOG.rdoc", __FILE__)).include?("Version #{version}")
+        end
+      end
+
       describe ".URB" do
         it "delegates to URB.config" do
           URB.expects(:config).with(:foo, :bar)
