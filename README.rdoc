@@ -1,4 +1,4 @@
-== URB
+== URB {<img src="https://secure.travis-ci.org/archan937/urb.png"/>}[http://travis-ci.org/archan937/urb] {<img src="https://codeclimate.com/github/archan937/urb.png"/>}[https://codeclimate.com/github/archan937/urb]
 
 Shorten URLs in your Rack / Rails app.
 
@@ -13,6 +13,70 @@ Add <tt>URB</tt> in <tt>Gemfile</tt> as a gem dependency:
 Run the following in your console to install with Bundler:
 
   $ bundle install
+
+=== Usage
+
+Invoke the view helper method <tt>urb</tt> within your template:
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Killer App</title>
+      <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
+      <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+      <%= csrf_meta_tags %>
+      <%= urb %>
+    </head>
+
+Click on links within your webpage or call the Javascript function <tt>URB.open()</tt>.
+
+  <script>
+    URB.open('/?p=today&f[]=paulengel&f[]=archan937&f[]=URB&f[]=demo&f[]=Rails&f[]=Long%20URL&f[]=foo&f[]=bar&f[]=baz&f[]=Ownage&f[]=AwesomeStuff&bd[]=Paul.Engel&foobarbaz_id[]=3&foobarbaz_id[]=1&foobarbaz_id[]=4&foobarbaz_id[]=5&foobarbaz_id[]=6&foobarbaz_id[]=7&foobarbaz_id[]=67&foobarbaz_id[]=108&foobarbaz_id[]=66&foobarbaz_id[]=65&foobarbaz_id[]=118&foobarbaz_id[]=68&foobarbaz_id[]=8&foobarbaz_id[]=128&foobarbaz_id[]=79&foobarbaz_id[]=78&foobarbaz_id[]=111&foobarbaz_id[]=9&foobarbaz_id[]=10&foobarbaz_id[]=129&foobarbaz_id[]=11&foobarbaz_id[]=124&foobarbaz_id[]=12&foobarbaz_id[]=130&foobarbaz_id[]=13&foobarbaz_id[]=121&foobarbaz_id[]=14&foobarbaz_id[]=77&foobarbaz_id[]=80&foobarbaz_id[]=15&foobarbaz_id[]=69&foobarbaz_id[]=16&foobarbaz_id[]=17&foobarbaz_id[]=131&foobarbaz_id[]=18&foobarbaz_id[]=117&foobarbaz_id[]=19&foobarbaz_id[]=81&foobarbaz_id[]=82&foobarbaz_id[]=20&foobarbaz_id[]=21&foobarbaz_id[]=96&foobarbaz_id[]=97&foobarbaz_id[]=98&foobarbaz_id[]=99&foobarbaz_id[]=112&foobarbaz_id[]=64&foobarbaz_id[]=63&foobarbaz_id[]=62&foobarbaz_id[]=22&foobarbaz_id[]=23&foobarbaz_id[]=120&foobarbaz_id[]=24&foobarbaz_id[]=87&foobarbaz_id[]=88&foobarbaz_id[]=61&foobarbaz_id[]=60&foobarbaz_id[]=70&foobarbaz_id[]=71&foobarbaz_id[]=100&foobarbaz_id[]=101&foobarbaz_id[]=25&foobarbaz_id[]=26&foobarbaz_id[]=132&foobarbaz_id[]=73&foobarbaz_id[]=72&foobarbaz_id[]=56&foobarbaz_id[]=55&foobarbaz_id[]=74&foobarbaz_id[]=75&foobarbaz_id[]=133&foobarbaz_id[]=83&foobarbaz_id[]=84&foobarbaz_id[]=27&foobarbaz_id[]=107&foobarbaz_id[]=28&foobarbaz_id[]=134&foobarbaz_id[]=135&foobarbaz_id[]=136&foobarbaz_id[]=29&foobarbaz_id[]=119&foobarbaz_id[]=113&foobarbaz_id[]=105&foobarbaz_id[]=104&foobarbaz_id[]=114&foobarbaz_id[]=89&foobarbaz_id[]=103&foobarbaz_id[]=30&foobarbaz_id[]=137&foobarbaz_id[]=76&foobarbaz_id[]=90&foobarbaz_id[]=93&foobarbaz_id[]=92&foobarbaz_id[]=109&foobarbaz_id[]=110&foobarbaz_id[]=139&foobarbaz_id[]=31&foobarbaz_id[]=32&foobarbaz_id[]=140&foobarbaz_id[]=33&foobarbaz_id[]=123&foobarbaz_id[]=34&foobarbaz_id[]=141&foobarbaz_id[]=35&foobarbaz_id[]=115&foobarbaz_id[]=36&foobarbaz_id[]=142&foobarbaz_id[]=86&foobarbaz_id[]=85&foobarbaz_id[]=94&foobarbaz_id[]=95&foobarbaz_id[]=37&foobarbaz_id[]=38&foobarbaz_id[]=40&foobarbaz_id[]=39&foobarbaz_id[]=41&foobarbaz_id[]=42&foobarbaz_id[]=43&foobarbaz_id[]=44&foobarbaz_id[]=45&foobarbaz_id[]=102&foobarbaz_id[]=57&foobarbaz_id[]=58&foobarbaz_id[]=46&foobarbaz_id[]=47&foobarbaz_id[]=48&foobarbaz_id[]=49&foobarbaz_id[]=50&foobarbaz_id[]=59&foobarbaz_id[]=51&foobarbaz_id[]=122&foobarbaz_id[]=52&foobarbaz_id[]=53&foobarbaz_id[]=116&foobarbaz_id[]=54&foobarbaz_id[]=106&foobarbaz_id[]=2&foobarbaz_id[]=91&foobarbaz_id[]=138');
+  </script>
+
+URB will automatically shorten the URL when it refers to the application itself and exceeds <tt>URB::MAXLENGTH</tt> (which is 2000 characters).
+
+==== URL storage
+
+The shortened URLs are stored using the {Moneta}[https://github.com/minad/moneta] gem. At default, they will be stored in memory.
+
+To store them within a database, configure URB with <tt>URB.configure</tt> (shortcut: <tt>URB</tt>) and the arguments will be forwarded to the Moneta constructor:
+
+(e.g. in config/initializers/u.rb)
+
+  URB.config :ActiveRecord, :table => "urls", :connection => {:adapter => "mysql2", :database => "my_awesome_app", :user => "someone", :password => "letmypass"}
+
+or probably
+
+(e.g. in config/initializers/u.rb)
+
+  URB :ActiveRecord, :table => "urls", :connection => ActiveRecord::Base.connection.instance_variable_get(:@config)
+
+The corresponding migration file should look like:
+
+  class CreateUrls < ActiveRecord::Migration
+    def change
+      create_table :urls do |t|
+        t.text :k
+        t.text :v
+        t.timestamps
+      end
+    end
+  end
+
+You can try this out in the provided demo application. Do not forget to uncomment the last line in {config/initializers/u.rb}[https://github.com/archan937/urb/blob/master/demo/config/initializers/u.rb].
+
+=== Console and demo Rails app
+
+The URB repository is provided with a console which you can start with <tt>script/console</tt>.
+
+Also, you can run the provided Rails 4 demo application to try out <tt>URB</tt> in your browser.
+
+=== Testing
+
+Run the following command for testing:
+
+  $ rake
 
 === License
 
