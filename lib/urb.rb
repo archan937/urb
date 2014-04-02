@@ -11,6 +11,7 @@ module URB
   CHARS = [*0..9, *"A".."Z", *"a".."z"]
   PATH = "/-/"
   PREFIX = "@"
+  MAXLENGTH = 2000
 
   def config(*args)
     @config = args

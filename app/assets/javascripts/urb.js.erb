@@ -11,7 +11,7 @@ if (typeof(URB) == 'undefined') {
 // *
 
 URB = (function() {
-  var urb_path = '<%= URB::PATH %>',
+  var urb_path = '<%= URB::PATH %>', maxlength = <%= URB::MAXLENGTH %>,
 
   $ = {
     ready: function(f){'\v'=='v'?setTimeout(f,0):$.on(document,'DOMContentLoaded',f);},
@@ -23,16 +23,25 @@ URB = (function() {
 
   init = function() {
     $.on(document, 'click', function(event) {
-      var target = event.target || event.srcElement || window.event.target || window.event.srcElement;
-      if (target.tagName == 'A' && $.hasClass(target, 'urb')) {
+      var target = event.target || event.srcElement || window.event.target || window.event.srcElement, css = URB.css || '';
+      if (target.tagName.toLowerCase() == 'a' && ((css == '') || $.hasClass(target, css))) {
         event.preventDefault();
         open(target.getAttribute('href'));
       }
     });
   },
 
-  open = function(path) {
-    $.request(urb_path, {path: path});
+  open = function(url) {
+    var location = document.createElement('a'), path;
+    location.href = url;
+    if (location.host == '') {
+      location.href = location.href;
+    }
+    if ((location.host == window.location.host) && (path = location.pathname + location.search).length > maxlength) {
+      $.request(urb_path, {path: path});
+    } else {
+      window.location = url;
+    }
   };
 
   $.ready(init);
