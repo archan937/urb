@@ -16,6 +16,8 @@ Run the following in your console to install with Bundler:
 
 === Usage
 
+==== Include urb.js
+
 Invoke the view helper method <tt>urb</tt> within your template:
 
   <!DOCTYPE html>
@@ -27,6 +29,18 @@ Invoke the view helper method <tt>urb</tt> within your template:
       <%= csrf_meta_tags %>
       <%= urb %>
     </head>
+
+==== Add urb.js to the precompiled Rails assets
+
+You will need to add <tt>urb.js</tt> to the additional precompiled assets in the production and staging environment.
+
+(e.g. in config/environments/production.rb)
+
+  # Precompile additional assets.
+  # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
+  config.assets.precompile += %w(urb.js)
+
+==== Start opening URLs
 
 Click on links within your webpage or call the Javascript function <tt>URB.open()</tt>.
 
