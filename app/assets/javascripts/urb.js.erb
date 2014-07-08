@@ -7,7 +7,7 @@ if (typeof(URB) == 'undefined') {
 // * Except otherwise noted, URB is licensed under
 // * http://creativecommons.org/licenses/by/3.0
 // *
-// * $Date: 2014-02-06 23:30:51 $
+// * $Date: 2014-07-08 10:56:53 $
 // *
 
 URB = (function() {
@@ -18,29 +18,31 @@ URB = (function() {
     on: function(e,t,f,r){if(e.attachEvent?(r?e.detachEvent('on'+t,e[t+f]):1):(r?e.removeEventListener(t,f,0):e.addEventListener(t,f,0))){e['e'+t+f]=f;e[t+f]=function(){e['e'+t+f](window.event);};e.attachEvent('on'+t,e[t+f]);}},
     hasClass: function(e,c){return $.indexOf(c,e.className.split(' '))>=0;},
     indexOf: function(v,a,i){for(i=a.length;i--&&a[i]!=v;);return i;},
-    request: function(d,e,f){f=f||'post';var c=document.createElement('form');c.setAttribute('method',f);c.setAttribute('action',d);for(var b in e){if(e.hasOwnProperty(b)){var a=document.createElement('input');a.setAttribute('type','hidden');a.setAttribute('name',b);a.setAttribute('value',e[b]);c.appendChild(a)}}document.body.appendChild(c);c.submit()}
+    request: function(d,e,f,t){f=f||'post';var c=document.createElement('form');c.setAttribute('method',f);c.setAttribute('action',d);c.setAttribute('target',t);for(var b in e){if(e.hasOwnProperty(b)){var a=document.createElement('input');a.setAttribute('type','hidden');a.setAttribute('name',b);a.setAttribute('value',e[b]);c.appendChild(a)}}document.body.appendChild(c);c.submit()}
   },
 
   init = function() {
     $.on(document, 'click', function(event) {
-      var target = event.target || event.srcElement || window.event.target || window.event.srcElement, css = URB.css || '';
-      if (target.tagName.toLowerCase() == 'a' && ((css == '') || $.hasClass(target, css))) {
-        event.preventDefault();
-        open(target.getAttribute('href'));
+      var target = event.target || event.srcElement || window.event.target || window.event.srcElement, css = URB.css || '', leftClick = (event.which || event.button) == 1;
+      if (leftClick) {
+        if (target.tagName.toLowerCase() == 'a' && ((css == '') || $.hasClass(target, css))) {
+          event.preventDefault();
+          open(target.getAttribute('href'), ((event.ctrlKey || event.metaKey) ? '_blank' : '_self'));
+        }
       }
     });
   },
 
-  open = function(url) {
+  open = function(url, target) {
     var location = document.createElement('a'), path;
     location.href = url;
     if (location.host == '') {
       location.href = location.href;
     }
     if ((location.host == window.location.host) && (path = location.pathname + location.search).length > maxlength) {
-      $.request(urb_path, {path: path});
+      $.request(urb_path, {path: path}, undefined, target);
     } else {
-      window.location = url;
+      window.open(url, target);
     }
   };
 
