@@ -27,13 +27,14 @@ URB = (function() {
       if (leftClick) {
         if (target.tagName.toLowerCase() == 'a' && ((css == '') || $.hasClass(target, css))) {
           event.preventDefault();
-          open(target.getAttribute('href'), ((event.ctrlKey || event.metaKey) ? '_blank' : '_self'));
+          open(target.getAttribute('href'), ((event.ctrlKey || event.metaKey) ? '_blank' : undefined));
         }
       }
     });
   },
 
   open = function(url, target) {
+    target || (target = '_self');
     var location = document.createElement('a'), path;
     location.href = url;
     if (location.host == '') {
