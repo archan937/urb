@@ -1,5 +1,9 @@
 = URB CHANGELOG
 
+== Version 0.1.2 (July 8, 2014)
+
+* Using target ‘_self’ when not having passed a target
+
 == Version 0.1.1 (July 8, 2014)
 
 * Only opening link when having used the left click button. Opening in new tab when also having pressed CTRL or Meta (Windows / Command) key
