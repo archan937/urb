@@ -11,7 +11,7 @@ module Unit
 
       describe "URB::VERSION" do
         it "has the current version" do
-          version = File.read File.expand_path("../../../VERSION", __FILE__)
+          version = File.read(File.expand_path("../../../VERSION", __FILE__)).strip
           assert_equal version, URB::VERSION
           assert File.read(File.expand_path("../../../CHANGELOG.rdoc", __FILE__)).include?("Version #{version}")
         end
