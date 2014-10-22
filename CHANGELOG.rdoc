@@ -1,5 +1,9 @@
 = URB CHANGELOG
 
+== Version 0.1.4 (October 22, 2014)
+
+* Ignoring links with hash tags
+
 == Version 0.1.3 (September 30, 2014)
 
 * Added urb.js to assets pipeline using the initializer
