@@ -7,7 +7,7 @@ if (typeof(URB) == 'undefined') {
 // * Except otherwise noted, URB is licensed under
 // * http://creativecommons.org/licenses/by/3.0
 // *
-// * $Date: 2014-07-08 10:56:53 $
+// * $Date: 2014-10-22 17:22:12 $
 // *
 
 URB = (function() {
@@ -23,8 +23,8 @@ URB = (function() {
 
   init = function() {
     $.on(document, 'click', function(event) {
-      var target = event.target || event.srcElement || window.event.target || window.event.srcElement, css = URB.css || '', leftClick = (event.which || event.button) == 1;
-      if (leftClick) {
+      var target = event.target || event.srcElement || window.event.target || window.event.srcElement, css = URB.css || '', leftClick = (event.which || event.button) == 1, href = target.getAttribute('href');
+      if (leftClick && !href.match(/#/)) {
         if (target.tagName.toLowerCase() == 'a' && ((css == '') || $.hasClass(target, css))) {
           event.preventDefault();
           open(target.getAttribute('href'), ((event.ctrlKey || event.metaKey) ? '_blank' : undefined));
