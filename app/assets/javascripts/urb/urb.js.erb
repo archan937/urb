@@ -24,8 +24,8 @@ URB = (function() {
   init = function() {
     $.on(document, 'click', function(event) {
       var target = event.target || event.srcElement || window.event.target || window.event.srcElement, css = URB.css || '', leftClick = (event.which || event.button) == 1, href = target.getAttribute('href');
-      if (leftClick && !href.match(/#/)) {
-        if (target.tagName.toLowerCase() == 'a' && ((css == '') || $.hasClass(target, css))) {
+      if (leftClick) {
+        if (target.tagName.toLowerCase() == 'a' && ((css == '') || $.hasClass(target, css)) && !href.match(/#/)) {
           event.preventDefault();
           open(target.getAttribute('href'), ((event.ctrlKey || event.metaKey) ? '_blank' : undefined));
         }
